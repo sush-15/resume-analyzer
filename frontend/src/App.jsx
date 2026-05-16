@@ -7,6 +7,7 @@ import Dashboard from './components/Dashboard/Dashboard';
 import ResumeUpload from './components/Resume/ResumeUpload';
 import ResumeAnalysis from './components/Resume/ResumeAnalysis';
 import JobMatch from './components/Jobs/JobMatch';
+import Profile from './components/Profile/Profile';
 import Navbar from './components/Layout/Navbar';
 
 // Protected route wrapper
@@ -53,6 +54,11 @@ export default function App() {
         <Route path="/jobs" element={
           <ProtectedRoute>
             <AuthLayout><JobMatch /></AuthLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <AuthLayout><Profile /></AuthLayout>
           </ProtectedRoute>
         } />
 

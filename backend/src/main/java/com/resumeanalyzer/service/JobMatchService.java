@@ -62,6 +62,39 @@ public class JobMatchService {
         return jobRepository.findByIsActiveTrueOrderByCreatedAtDesc();
     }
 
+    @Transactional
+    public Job createJob(Job job) {
+        job.setIsActive(true);
+        Job saved = jobRepository.save(job);
+        log.info("Created new job: " + saved.getTitle() + " (ID: " + saved.getId() + ")");
+        return saved;
+    }
+
+    @Transactional
+    public Job updateJob(Long jobId, Job updated) {
+        Job existing = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found: " + jobId));
+        existing.setTitle(updated.getTitle());
+        existing.setCompany(updated.getCompany());
+        existing.setDescription(updated.getDescription());
+        existing.setRequiredSkills(updated.getRequiredSkills());
+        existing.setExperienceLevel(updated.getExperienceLevel());
+        existing.setJobType(updated.getJobType());
+        existing.setLocation(updated.getLocation());
+        Job saved = jobRepository.save(existing);
+        log.info("Updated job ID: " + jobId);
+        return saved;
+    }
+
+    @Transactional
+    public void deleteJob(Long jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found: " + jobId));
+        job.setIsActive(false);
+        jobRepository.save(job);
+        log.info("Deactivated job ID: " + jobId);
+    }
+
     private JobMatchResponse calculateJobMatch(Resume resume, Job job, String resumeText) {
         List<String> requiredSkills = parseSkillsJson(job.getRequiredSkills());
         List<String> matched = new ArrayList<>();

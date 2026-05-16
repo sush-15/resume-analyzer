@@ -54,6 +54,7 @@ export const resumeAPI = {
   getAiFeedback: (id) => api.get(`/resume/${id}/ai-feedback`),
   getJobMatches: (id) => api.get(`/resume/${id}/job-matches`),
   deleteResume:  (id) => api.delete(`/resume/${id}`),
+  reanalyze:     (id) => api.post(`/resume/${id}/reanalyze`),
 };
 
 // ============================================

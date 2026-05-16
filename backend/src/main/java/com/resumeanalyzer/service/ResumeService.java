@@ -73,7 +73,7 @@ public class ResumeService {
     public Resume getResumeById(Long resumeId, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return resumeRepository.findByIdAndUser(resumeId, user)
+        return resumeRepository.findByIdAndUserAndIsActiveTrue(resumeId, user)
                 .orElseThrow(() -> new RuntimeException("Resume not found: " + resumeId));
     }
 

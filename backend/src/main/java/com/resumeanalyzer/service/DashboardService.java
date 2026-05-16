@@ -1,5 +1,7 @@
 package com.resumeanalyzer.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.resumeanalyzer.dto.response.AtsScoreResponse;
 import com.resumeanalyzer.dto.response.DashboardResponse;
 import com.resumeanalyzer.dto.response.JobMatchResponse;
@@ -19,15 +21,18 @@ public class DashboardService {
     private final ResumeRepository resumeRepository;
     private final AtsScoreRepository atsScoreRepository;
     private final SkillMatchRepository skillMatchRepository;
+    private final ObjectMapper objectMapper;
 
     public DashboardService(UserRepository userRepository,
                             ResumeRepository resumeRepository,
                             AtsScoreRepository atsScoreRepository,
-                            SkillMatchRepository skillMatchRepository) {
+                            SkillMatchRepository skillMatchRepository,
+                            ObjectMapper objectMapper) {
         this.userRepository = userRepository;
         this.resumeRepository = resumeRepository;
         this.atsScoreRepository = atsScoreRepository;
         this.skillMatchRepository = skillMatchRepository;
+        this.objectMapper = objectMapper;
     }
 
     public DashboardResponse getDashboard(String userEmail) {
@@ -88,11 +93,17 @@ public class DashboardService {
         Map<String, Integer> freq = new HashMap<>();
         for (AtsScore score : scores) {
             String json = missing ? score.getMissingKeywords() : score.getMatchedKeywords();
-            if (json == null) continue;
-            String[] parts = json.replace("[","").replace("]","").replace("\"","").split(",");
-            for (String s : parts) {
-                String skill = s.trim();
-                if (!skill.isEmpty()) freq.merge(skill, 1, Integer::sum);
+            if (json == null || json.isBlank()) continue;
+            try {
+                @SuppressWarnings("unchecked")
+                List<String> skills = objectMapper.readValue(json, List.class);
+                for (String skill : skills) {
+                    if (skill != null && !skill.isBlank()) {
+                        freq.merge(skill.trim(), 1, (a, b) -> a + b);
+                    }
+                }
+            } catch (JsonProcessingException e) {
+                // skip malformed JSON
             }
         }
         return freq.entrySet().stream()

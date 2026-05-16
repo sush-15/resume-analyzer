@@ -9,6 +9,7 @@ export default function Dashboard() {
   const [data,    setData]    = useState(null);
   const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     fetchDashboard();
@@ -24,9 +25,24 @@ export default function Dashboard() {
       setData(dashRes.data);
       setResumes(resumeRes.data);
     } catch (err) {
-      toast.error('Failed to load dashboard');
+      toast.error(err.response?.data?.message || 'Failed to load dashboard');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (resumeId, fileName) => {
+    if (!window.confirm(`Delete "${fileName}"? This cannot be undone.`)) return;
+    setDeletingId(resumeId);
+    try {
+      await resumeAPI.deleteResume(resumeId);
+      toast.success('Resume deleted');
+      // Refresh both lists
+      fetchDashboard();
+    } catch (err) {
+      toast.error('Failed to delete resume');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -44,7 +60,7 @@ export default function Dashboard() {
   );
 
   const chartData = data?.recentScores?.map(s => ({
-    name: s.fileName?.substring(0, 12) + '...' || 'Resume',
+    name: s.fileName?.length > 12 ? s.fileName.substring(0, 12) + '…' : (s.fileName || 'Resume'),
     score: s.overallScore,
   })) || [];
 
@@ -137,6 +153,12 @@ export default function Dashboard() {
                   </div>
                 </div>
               ))}
+              <button
+                style={{ ...styles.viewAllBtn, marginTop: 12 }}
+                onClick={() => navigate('/jobs')}
+              >
+                View All Matches →
+              </button>
             </div>
           )}
         </div>
@@ -197,12 +219,22 @@ export default function Dashboard() {
                       Uploaded: {new Date(resume.uploadedAt).toLocaleDateString()}
                     </p>
                   </div>
-                  <button
-                    style={styles.analyzeBtn}
-                    onClick={() => navigate(`/analysis/${resume.id}`)}
-                  >
-                    View Analysis
-                  </button>
+                  <div style={styles.resumeActions}>
+                    <button
+                      style={styles.analyzeBtn}
+                      onClick={() => navigate(`/analysis/${resume.id}`)}
+                    >
+                      View Analysis
+                    </button>
+                    <button
+                      style={styles.deleteBtn}
+                      onClick={() => handleDelete(resume.id, resume.fileName)}
+                      disabled={deletingId === resume.id}
+                      title="Delete resume"
+                    >
+                      {deletingId === resume.id ? '…' : '🗑'}
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -300,13 +332,19 @@ const styles = {
     display: 'flex', alignItems: 'center', gap: 14,
     padding: '12px 0', borderBottom: '1px solid #f1f5f9',
   },
-  resumeIcon: { fontSize: 28, flexShrink: 0 },
-  resumeInfo: { flex: 1 },
-  resumeName: { fontSize: 14, fontWeight: 600, color: '#1e293b' },
-  resumeDate: { fontSize: 12, color: '#64748b' },
+  resumeIcon:    { fontSize: 28, flexShrink: 0 },
+  resumeInfo:    { flex: 1 },
+  resumeName:    { fontSize: 14, fontWeight: 600, color: '#1e293b' },
+  resumeDate:    { fontSize: 12, color: '#64748b' },
+  resumeActions: { display: 'flex', gap: 8, alignItems: 'center' },
   analyzeBtn: {
     background: '#eef2ff', color: '#4f46e5', border: 'none',
     padding: '7px 14px', borderRadius: 6, fontSize: 13,
     fontWeight: 500, cursor: 'pointer',
+  },
+  deleteBtn: {
+    background: '#fee2e2', color: '#ef4444', border: 'none',
+    padding: '7px 10px', borderRadius: 6, fontSize: 14,
+    cursor: 'pointer',
   },
 };

@@ -80,6 +80,26 @@ public class ResumeController {
         return ResponseEntity.ok(Map.of("message", "Resume deleted successfully"));
     }
 
+    /**
+     * Re-run ATS scoring, AI feedback, and job matching for an existing resume.
+     * Useful when the user wants fresh analysis (e.g., after job list changes).
+     */
+    @PostMapping("/{resumeId}/reanalyze")
+    public ResponseEntity<Map<String, Object>> reanalyzeResume(
+            @PathVariable Long resumeId, Authentication authentication) {
+        Resume resume = resumeService.getResumeById(resumeId, authentication.getName());
+        AtsScore atsScore = atsScoreService.calculateAndSave(resume);
+        aiAnalysisService.generateAndSaveFeedback(resume);
+        jobMatchService.matchResumeToJobs(resume);
+
+        return ResponseEntity.ok(Map.of(
+            "message",    "Resume re-analyzed successfully!",
+            "resumeId",   resume.getId(),
+            "atsScore",   atsScore.getOverallScore(),
+            "scoreGrade", getGrade(atsScore.getOverallScore())
+        ));
+    }
+
     private String getGrade(int score) {
         if (score >= 85) return "A";
         if (score >= 70) return "B";

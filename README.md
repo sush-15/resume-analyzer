@@ -1,253 +1,231 @@
-# 🎯 AI-Powered Resume Analyzer, ATS Checker & Job Matcher
+# 🎯 ResumeAI — Resume Analyzer
 
-> A production-level full-stack web application that analyzes resumes using AI, calculates ATS compatibility scores, and matches candidates to job roles.
+An AI-powered resume analysis platform built with **Spring Boot** (backend) and **React** (frontend).
 
-![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=java)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.5-green?style=flat-square&logo=springboot)
-![React](https://img.shields.io/badge/React-18-blue?style=flat-square&logo=react)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=flat-square&logo=mysql)
-![JWT](https://img.shields.io/badge/JWT-Auth-purple?style=flat-square)
-![Gemini AI](https://img.shields.io/badge/Gemini-AI-red?style=flat-square&logo=google)
-
----
-
-## 📸 Features
-
-| Feature | Description |
-|---------|-------------|
-| 🔐 **JWT Authentication** | Secure register/login with BCrypt password hashing |
-| 📄 **Resume Upload** | Upload PDF, DOC, DOCX resumes (up to 10MB) |
-| 📊 **ATS Score Calculator** | Scores resume 0–100 based on keywords, sections, skills, formatting |
-| 🤖 **AI Feedback** | Google Gemini AI analyzes resume and gives actionable suggestions |
-| 💼 **Job Matcher** | Matches your resume skills against real job listings |
-| 📈 **Dashboard** | Visual analytics — score history, skill gaps, top job matches |
+Upload your resume and get:
+- **ATS Score** — keyword match, section completeness, skills, formatting (0–100)
+- **AI Feedback** — suggestions, missing skills, and improvements via Gemini AI
+- **Job Matching** — match your resume against available jobs with skill gap analysis
+- **Dashboard** — track your progress over time
 
 ---
 
-## 🏗️ Architecture
+## Tech Stack
 
-```
-┌─────────────────┐         ┌──────────────────────┐         ┌──────────┐
-│   React Frontend │ ──────▶ │  Spring Boot Backend  │ ──────▶ │  MySQL   │
-│   (Port 3000)    │  REST   │     (Port 8080)        │   JPA   │   DB     │
-│                  │  API    │                        │         │          │
-│  - Login/Register│         │  - JWT Security        │         │ - users  │
-│  - Resume Upload │         │  - PDF/DOCX Parsing    │         │ - resumes│
-│  - ATS Dashboard │         │  - ATS Scoring Engine  │         │ - scores │
-│  - Job Matcher   │         │  - Gemini AI API       │         │ - jobs   │
-└─────────────────┘         └──────────────────────┘         └──────────┘
-```
+| Layer    | Technology                                      |
+|----------|-------------------------------------------------|
+| Backend  | Java 17, Spring Boot 3.2, Spring Security (JWT) |
+| Database | MySQL 8 (prod) / H2 in-memory (dev)             |
+| AI       | Google Gemini API                               |
+| Frontend | React 18, Recharts, Axios, React Router v6      |
 
 ---
 
-## 🛠️ Tech Stack
-
-### Backend
-- **Java 17** + **Spring Boot 3.2.5**
-- **Spring Security 6** + **JWT (JJWT 0.12.5)**
-- **Spring Data JPA** + **Hibernate**
-- **MySQL 8.0**
-- **Apache PDFBox 3.x** — PDF text extraction
-- **Apache Tika 2.9** — DOC/DOCX text extraction
-- **Google Gemini API** — AI resume feedback
-- **Maven** — Build tool
-
-### Frontend
-- **React 18** + **React Router v6**
-- **Axios** — HTTP client
-- **Recharts** — Data visualization
-- **React Toastify** — Notifications
-
----
-
-## 📁 Project Structure
-
-```
-resume-analyzer/
-├── backend/                          # Spring Boot application
-│   ├── pom.xml
-│   └── src/main/java/com/resumeanalyzer/
-│       ├── config/                   # SecurityConfig, CorsConfig
-│       ├── controller/               # Auth, Resume, Job, Dashboard APIs
-│       ├── dto/                      # Request & Response DTOs
-│       ├── entity/                   # JPA Entities (User, Resume, AtsScore...)
-│       ├── exception/                # Global exception handler
-│       ├── repository/               # Spring Data JPA repositories
-│       ├── security/                 # JWT filter, token provider
-│       ├── service/                  # Business logic layer
-│       └── util/                     # PDF extractor, ATS calculator
-│
-├── frontend/                         # React application
-│   ├── package.json
-│   └── src/
-│       ├── components/
-│       │   ├── Auth/                 # Login, Register
-│       │   ├── Dashboard/            # Analytics dashboard
-│       │   ├── Jobs/                 # Job matcher
-│       │   ├── Layout/               # Navbar
-│       │   └── Resume/               # Upload & Analysis
-│       └── services/api.js           # Axios API client
-│
-└── README.md
-```
-
----
-
-## ⚙️ Setup & Installation
+## Quick Start
 
 ### Prerequisites
 - Java 17+
-- Maven 3.6+
-- MySQL 8.0
 - Node.js 18+
+- Maven 3.8+
+- MySQL 8 (or use H2 for dev — no install needed)
 
-### 1. Clone the repository
+---
+
+### 1. Clone & Configure Backend
+
 ```bash
-git clone https://github.com/YOUR_USERNAME/resume-analyzer.git
-cd resume-analyzer
+cd resume-analyzer/backend
 ```
 
-### 2. Configure MySQL
+**Option A — MySQL (production)**
+
+Edit `src/main/resources/application.properties`:
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/resume_analyzer_db?useSSL=false&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=YOUR_MYSQL_PASSWORD
+
+gemini.api.key=YOUR_GEMINI_API_KEY
+```
+
+Create the database:
 ```sql
 CREATE DATABASE resume_analyzer_db;
 ```
 
-Edit `backend/src/main/resources/application.properties`:
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/resume_analyzer_db
-spring.datasource.username=root
-spring.datasource.password=YOUR_PASSWORD
-```
+**Option B — H2 in-memory (dev, no MySQL needed)**
 
-### 3. Add Gemini API Key (Optional)
-Get a free key at: https://aistudio.google.com/app/apikey
-
-```properties
-gemini.api.key=YOUR_GEMINI_API_KEY
-```
-> Without a key, the app uses a built-in fallback analyzer — it still works!
-
-### 4. Start the Backend
 ```bash
-cd backend
+mvn spring-boot:run -Dspring-boot.run.profiles=h2
+```
+
+Data is lost on restart. Good for testing.
+
+---
+
+### 2. Get a Gemini API Key (free)
+
+1. Go to [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
+2. Create a free API key
+3. Paste it into `application.properties` as `gemini.api.key`
+
+Without a key, the app falls back to heuristic AI feedback (still works, just less detailed).
+
+---
+
+### 3. Run the Backend
+
+```bash
+cd resume-analyzer/backend
 mvn spring-boot:run
 ```
-Backend runs at: `http://localhost:8080`
 
-### 5. Start the Frontend
+Backend starts at **http://localhost:8080**
+
+On first run, 8 sample jobs are seeded automatically.
+
+---
+
+### 4. Run the Frontend
+
 ```bash
-cd frontend
+cd resume-analyzer/frontend
 npm install
 npm start
 ```
-Frontend runs at: `http://localhost:3000`
 
-### 6. Seed Job Data
-After the backend starts, run `backend/src/main/resources/db/schema.sql` in MySQL Workbench to insert 8 sample job listings.
+Frontend starts at **http://localhost:3000**
 
 ---
 
-## 📡 API Endpoints
+## Features
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/api/auth/register` | ❌ | Register new user |
-| POST | `/api/auth/login` | ❌ | Login, returns JWT |
-| POST | `/api/resume/upload` | ✅ | Upload & analyze resume |
-| GET | `/api/resume/my-resumes` | ✅ | Get all user resumes |
-| GET | `/api/resume/{id}/ats-score` | ✅ | Get ATS score breakdown |
-| GET | `/api/resume/{id}/ai-feedback` | ✅ | Get AI feedback |
-| GET | `/api/resume/{id}/job-matches` | ✅ | Get job match results |
-| DELETE | `/api/resume/{id}` | ✅ | Delete resume |
-| GET | `/api/jobs/public/all` | ❌ | Get all job listings |
-| GET | `/api/dashboard` | ✅ | Get dashboard analytics |
+### Authentication
+- Register / Login with JWT tokens
+- Auto-logout on token expiry (24h)
+- BCrypt password hashing
 
----
+### Resume Upload
+- Drag & drop or click to upload PDF, DOC, DOCX (max 10MB)
+- Instant ATS scoring on upload
+- AI feedback generation (Gemini API with fallback)
+- Automatic job matching
 
-## 🧮 ATS Scoring Algorithm
+### ATS Score Breakdown
+| Component          | Max Points |
+|--------------------|-----------|
+| Keyword Match      | 40        |
+| Section Completeness | 25      |
+| Technical Skills   | 20        |
+| Formatting Quality | 15        |
+| **Total**          | **100**   |
 
-The ATS score is calculated out of 100 points:
+### Job Matching
+- Match any resume against all active jobs
+- See matched and missing skills per job
+- Filter by match quality (Excellent / Good / Partial)
 
-| Component | Points | Logic |
-|-----------|--------|-------|
-| **Keyword Match** | 40 pts | Matches resume against 50+ industry keywords |
-| **Section Completeness** | 25 pts | Checks for Skills, Experience, Education, Projects, Contact |
-| **Technical Skills** | 20 pts | Weighted scoring for high-value skills (Java=5, Spring Boot=5...) |
-| **Formatting Quality** | 15 pts | Word count, bullet points, contact info, GitHub/LinkedIn |
+### Dashboard
+- Stats: total resumes, average ATS score, best score, job matches
+- ATS score history chart
+- Top matched and missing skills across all resumes
+- Resume list with delete and view analysis actions
 
-**Score Grades:**
-- A (85–100): Excellent — Very likely to pass ATS
-- B (70–84): Good — Likely to pass most ATS systems
-- C (55–69): Average — May pass some ATS systems
-- D (40–54): Below Average — Needs improvement
-- F (0–39): Poor — Major improvements required
-
----
-
-## 🤖 AI Integration
-
-Uses **Google Gemini Pro API** to analyze resume text and return:
-- Strengths & Weaknesses
-- Missing Skills
-- Improvement Suggestions
-- Better wording recommendations
-
-Falls back to a rule-based analyzer if no API key is configured.
+### Profile
+- Account info overview
+- Quick action buttons
 
 ---
 
-## 🗄️ Database Schema
+## API Endpoints
+
+### Auth
+| Method | Endpoint              | Description       |
+|--------|-----------------------|-------------------|
+| POST   | `/api/auth/register`  | Register new user |
+| POST   | `/api/auth/login`     | Login, get JWT    |
+
+### Resume
+| Method | Endpoint                        | Description              |
+|--------|---------------------------------|--------------------------|
+| POST   | `/api/resume/upload`            | Upload & analyze resume  |
+| GET    | `/api/resume/my-resumes`        | List user's resumes      |
+| GET    | `/api/resume/{id}/ats-score`    | Get ATS score            |
+| GET    | `/api/resume/{id}/ai-feedback`  | Get AI feedback          |
+| GET    | `/api/resume/{id}/job-matches`  | Get job matches          |
+| POST   | `/api/resume/{id}/reanalyze`    | Re-run full analysis     |
+| DELETE | `/api/resume/{id}`              | Soft-delete resume       |
+
+### Jobs
+| Method | Endpoint              | Auth     | Description              |
+|--------|-----------------------|----------|--------------------------|
+| GET    | `/api/jobs/public/all`| None     | List all active jobs     |
+| GET    | `/api/jobs/match/{id}`| JWT      | Match resume to jobs     |
+| POST   | `/api/jobs`           | ADMIN    | Create a new job         |
+| PUT    | `/api/jobs/{id}`      | ADMIN    | Update a job             |
+| DELETE | `/api/jobs/{id}`      | ADMIN    | Deactivate a job         |
+
+### Dashboard
+| Method | Endpoint         | Description          |
+|--------|------------------|----------------------|
+| GET    | `/api/dashboard` | Get dashboard stats  |
+
+---
+
+## Project Structure
 
 ```
-users          → id, full_name, email, password, role, created_at
-resumes        → id, user_id, file_name, file_path, extracted_text, uploaded_at
-ats_scores     → id, resume_id, user_id, overall_score, keyword_score, ...
-jobs           → id, title, company, required_skills (JSON), experience_level, ...
-skill_matches  → id, user_id, resume_id, job_id, match_score, matched_skills, ...
-ai_feedback    → id, resume_id, user_id, feedback_text, suggestions, ...
+resume-analyzer/
+├── backend/
+│   └── src/main/java/com/resumeanalyzer/
+│       ├── config/          # Security, CORS, DataInitializer
+│       ├── controller/      # REST controllers
+│       ├── dto/             # Request/Response DTOs
+│       ├── entity/          # JPA entities
+│       ├── exception/       # Global exception handler
+│       ├── repository/      # Spring Data JPA repos
+│       ├── security/        # JWT filter, UserDetailsService
+│       ├── service/         # Business logic
+│       └── util/            # ATS calculator, PDF extractor
+└── frontend/
+    └── src/
+        ├── components/
+        │   ├── Auth/        # Login, Register
+        │   ├── Dashboard/   # Dashboard
+        │   ├── Jobs/        # Job matching
+        │   ├── Layout/      # Navbar
+        │   ├── Profile/     # Profile page
+        │   └── Resume/      # Upload, Analysis
+        └── services/
+            └── api.js       # Axios client + all API calls
 ```
 
 ---
 
-## 🎓 Interview Talking Points
+## Environment Variables
 
-**Q: How does ATS scoring work?**
-> ATS systems parse resumes and match keywords against job descriptions. Our engine replicates this by scoring keyword density, section completeness, technical skill presence, and formatting quality.
+For production, use environment variables instead of hardcoding in `application.properties`:
 
-**Q: How is JWT authentication implemented?**
-> On login, the server generates a signed JWT token using HMAC-SHA256. The client stores it in localStorage and sends it in the `Authorization: Bearer <token>` header on every request. The `JwtAuthenticationFilter` validates it before each API call.
+```bash
+export SPRING_DATASOURCE_PASSWORD=your_password
+export GEMINI_API_KEY=your_key
+export JWT_SECRET=your_256bit_secret
+```
 
-**Q: How does the job matching work?**
-> We parse the required skills JSON from each job, then check how many of those skills appear in the resume text. Match score = (matched skills / total required skills) × 100.
-
-**Q: Why no Lombok?**
-> Java 24 has annotation processing issues with Lombok. All entities and DTOs use explicit getters, setters, and inner Builder classes — which is actually better for understanding the code.
-
----
-
-## 🚀 Future Improvements
-
-- [ ] Resume version comparison
-- [ ] Email notifications for job matches
-- [ ] Admin panel for managing jobs
-- [ ] Docker + Docker Compose setup
-- [ ] Deploy to AWS / Railway / Render
-- [ ] Resume PDF generation
-- [ ] LinkedIn profile import
+Then reference them in `application.properties`:
+```properties
+spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
+gemini.api.key=${GEMINI_API_KEY}
+jwt.secret=${JWT_SECRET}
+```
 
 ---
 
-## 👨‍💻 Author
+## Admin Account
 
-Built as a portfolio project demonstrating:
-- Production-level Spring Boot architecture
-- JWT security implementation
-- AI API integration
-- Full-stack React + Java development
-- Clean code practices without Lombok
+To create an admin user, update the role directly in the database:
+```sql
+UPDATE users SET role = 'ADMIN' WHERE email = 'admin@example.com';
+```
 
----
-
-## 📄 License
-
-MIT License — free to use for learning and portfolio purposes.
+Admin users can create, update, and deactivate jobs via the API.

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { RadialBarChart, RadialBar, ResponsiveContainer, Tooltip } from 'recharts';
 import { resumeAPI } from '../../services/api';
 
 export default function ResumeAnalysis() {
   const { resumeId } = useParams();
+  const navigate = useNavigate();
   const [atsScore,   setAtsScore]   = useState(null);
   const [aiFeedback, setAiFeedback] = useState(null);
   const [loading,    setLoading]    = useState(true);
+  const [reanalyzing, setReanalyzing] = useState(false);
   const [activeTab,  setActiveTab]  = useState('ats');
 
   useEffect(() => {
@@ -31,6 +32,19 @@ export default function ResumeAnalysis() {
     }
   };
 
+  const handleReanalyze = async () => {
+    setReanalyzing(true);
+    try {
+      await resumeAPI.reanalyze(resumeId);
+      toast.success('Re-analysis complete!');
+      fetchData();
+    } catch (err) {
+      toast.error('Re-analysis failed. Please try again.');
+    } finally {
+      setReanalyzing(false);
+    }
+  };
+
   const getScoreColor = (score) => {
     if (score >= 70) return '#10b981';
     if (score >= 50) return '#f59e0b';
@@ -47,11 +61,25 @@ export default function ResumeAnalysis() {
   return (
     <div style={styles.page}>
       <div style={styles.container}>
+        {/* Back navigation */}
+        <button style={styles.backBtn} onClick={() => navigate('/dashboard')}>
+          ← Back to Dashboard
+        </button>
+
         <h1 style={styles.title}>📊 Resume Analysis</h1>
-        <p style={styles.subtitle}>
-          {atsScore?.fileName} — Analyzed on{' '}
-          {atsScore?.analyzedAt ? new Date(atsScore.analyzedAt).toLocaleDateString() : ''}
-        </p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 28 }}>
+          <p style={styles.subtitle}>
+            {atsScore?.fileName} — Analyzed on{' '}
+            {atsScore?.analyzedAt ? new Date(atsScore.analyzedAt).toLocaleDateString() : ''}
+          </p>
+          <button
+            style={styles.reanalyzeBtn}
+            onClick={handleReanalyze}
+            disabled={reanalyzing}
+          >
+            {reanalyzing ? '⏳ Re-analyzing...' : '🔄 Re-analyze'}
+          </button>
+        </div>
 
         {/* Score Overview */}
         {atsScore && (
@@ -122,7 +150,6 @@ export default function ResumeAnalysis() {
 
         {/* Tab Content */}
         <div style={styles.tabContent}>
-
           {/* ATS Details Tab */}
           {activeTab === 'ats' && atsScore && (
             <div>
@@ -201,6 +228,17 @@ export default function ResumeAnalysis() {
             </div>
           )}
         </div>
+
+        {/* Bottom actions */}
+        <div style={styles.bottomActions}>
+          <button style={styles.jobsBtn} onClick={() => navigate('/jobs')}>
+            💼 Find Job Matches
+          </button>
+          <button style={styles.dashBtn} onClick={() => navigate('/dashboard')}>
+            ← Back to Dashboard
+          </button>
+        </div>
+
       </div>
     </div>
   );
@@ -235,10 +273,20 @@ function FeedbackSection({ title, items, color, bg }) {
 }
 
 const styles = {
+  backBtn: {
+    background: 'none', border: 'none', color: '#4f46e5',
+    fontSize: 14, fontWeight: 500, cursor: 'pointer',
+    padding: '0 0 16px 0', display: 'block',
+  },
   page:      { padding: '0 24px' },
   container: { maxWidth: 900, margin: '0 auto' },
   title:     { fontSize: 26, fontWeight: 700, color: '#1e293b', marginBottom: 4 },
-  subtitle:  { color: '#64748b', fontSize: 14, marginBottom: 28 },
+  subtitle:  { color: '#64748b', fontSize: 14 },
+  reanalyzeBtn: {
+    background: '#f1f5f9', color: '#4f46e5', border: '1px solid #e2e8f0',
+    padding: '8px 16px', borderRadius: 8, fontSize: 13,
+    fontWeight: 600, cursor: 'pointer',
+  },
   loading:   { textAlign: 'center', padding: 80, color: '#64748b' },
   spinner:   { fontSize: 40, marginBottom: 12 },
 
@@ -299,5 +347,18 @@ const styles = {
     background: '#f8fafc', borderRadius: 8, padding: 16,
     fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap',
     lineHeight: 1.7, border: '1px solid #e2e8f0',
+  },
+  bottomActions: {
+    display: 'flex', gap: 12, marginTop: 24, flexWrap: 'wrap',
+  },
+  jobsBtn: {
+    background: '#10b981', color: '#fff', border: 'none',
+    padding: '11px 22px', borderRadius: 8, fontSize: 14,
+    fontWeight: 600, cursor: 'pointer',
+  },
+  dashBtn: {
+    background: '#f1f5f9', color: '#374151', border: '1px solid #e2e8f0',
+    padding: '11px 22px', borderRadius: 8, fontSize: 14,
+    fontWeight: 500, cursor: 'pointer',
   },
 };

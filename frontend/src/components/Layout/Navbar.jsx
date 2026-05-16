@@ -46,7 +46,13 @@ export default function Navbar() {
 
         {/* User Info + Logout */}
         <div style={styles.userSection}>
-          <span style={styles.userName}>👤 {user.fullName || 'User'}</span>
+          <Link to="/profile" style={{
+            ...styles.userName,
+            textDecoration: 'none',
+            ...(isActive('/profile') ? { background: 'rgba(255,255,255,0.15)', borderRadius: 8, padding: '4px 10px' } : {}),
+          }}>
+            👤 {user.fullName || 'User'}
+          </Link>
           <button onClick={handleLogout} style={styles.logoutBtn}>
             Logout
           </button>
