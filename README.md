@@ -1,12 +1,12 @@
-# 🎯 ResumeAI - Resume Analyzer
+#  ResumeAI - Resume Analyzer
 
 An AI-powered resume analysis platform built with **Spring Boot** (backend) and **React** (frontend).
 
 Upload your resume and get:
-- **ATS Score** - keyword match, section completeness, skills, formatting (0–100)
-- **AI Feedback** - suggestions, missing skills, and improvements via Gemini AI
+- **ATS Score** - for keyword match, section completeness, skills, formatting (0–100)
+- **AI Feedback** - for suggestions, missing skills, and improvements via Gemini AI
 - **Job Matching** - match your resume against available jobs with skill gap analysis
-- **Dashboard** - track your progress over time
+- **Dashboard** - track your progress over time to time
 
 ---
 
@@ -24,10 +24,10 @@ Upload your resume and get:
 ## Quick Start
 
 ### Prerequisites
-- Java 17+
+- Java 17+ (or LTS version)
 - Node.js 18+
 - Maven 3.8+
-- MySQL 8 (or use H2 for dev — no install needed)
+- MySQL 8 (or use H2 for dev - don't install H2 separately. It runs inside your app as a Java library, just add the dependency to your pom.xml is enough and Maven will managed them)
 
 ---
 
@@ -69,7 +69,7 @@ Data is lost on restart. Good for testing.
 2. Create a free API key
 3. Paste it into `application.properties` as `gemini.api.key`
 
-Without a key, the app falls back to heuristic AI feedback (still works, just less detailed).
+Without a key, the app falls back to rule based feedback (still works but just less detailed).
 
 ---
 
