@@ -12,12 +12,10 @@ Upload your resume and get:
 
 ## Tech Stack
 
-| Layer    | Technology                                      |
-|----------|-------------------------------------------------|
-| Backend  | Java 17, Spring Boot 3.2, Spring Security (JWT) |
-| Database | MySQL 8 (prod) / H2 in-memory (dev)             |
-| AI       | Google Gemini API                               |
-| Frontend | React 18, Recharts, Axios, React Router v6      |
+ Backend  - Java 17, Spring Boot 3.2, Spring Security (JWT) 
+ Database - MySQL 8 (prod) / H2 in-memory (dev)             
+ AI       - Google Gemini API                               
+ Frontend - React 18, Recharts, Axios, React Router v6      
 
 ---
 
@@ -112,13 +110,13 @@ Frontend starts at **http://localhost:3000**
 - Automatic job matching
 
 ### ATS Score Breakdown
-| Component          | Max Points |
-|--------------------|-----------|
-| Keyword Match      | 40        |
-| Section Completeness | 25      |
-| Technical Skills   | 20        |
-| Formatting Quality | 15        |
-| **Total**          | **100**   |
+
+ **Component**         **Max Points** 
+ Keyword Match        ->  40        
+ Section Completeness -> 25      
+ Technical Skills     -> 20        
+ Formatting Quality   -> 15        
+ **Total**            -> **100**   
 
 ### Job Matching
 - Match any resume against all active jobs
@@ -146,24 +144,24 @@ Frontend starts at **http://localhost:3000**
 | POST   | `/api/auth/login`     | Login, get JWT    |
 
 ### Resume
-| Method | Endpoint                        | Description              |
-|--------|---------------------------------|--------------------------|
-| POST   | `/api/resume/upload`            | Upload & analyze resume  |
-| GET    | `/api/resume/my-resumes`        | List user's resumes      |
-| GET    | `/api/resume/{id}/ats-score`    | Get ATS score            |
-| GET    | `/api/resume/{id}/ai-feedback`  | Get AI feedback          |
-| GET    | `/api/resume/{id}/job-matches`  | Get job matches          |
-| POST   | `/api/resume/{id}/reanalyze`    | Re-run full analysis     |
-| DELETE | `/api/resume/{id}`              | Soft-delete resume       |
+ Method |     Endpoint                    |     Description              
+
+ POST   - `/api/resume/upload`            -> Upload & analyze resume  
+ GET    - `/api/resume/my-resumes`        -> List user's resumes      
+ GET    - `/api/resume/{id}/ats-score`    -> Get ATS score            
+ GET    - `/api/resume/{id}/ai-feedback`  -> Get AI feedback          
+ GET    - `/api/resume/{id}/job-matches`  -> Get job matches          
+ POST   - `/api/resume/{id}/reanalyze`    -> Re-run full analysis     
+ DELETE - `/api/resume/{id}`              -> Soft-delete resume       
 
 ### Jobs
-| Method | Endpoint              | Auth     | Description              |
-|--------|-----------------------|----------|--------------------------|
-| GET    | `/api/jobs/public/all`| None     | List all active jobs     |
-| GET    | `/api/jobs/match/{id}`| JWT      | Match resume to jobs     |
-| POST   | `/api/jobs`           | ADMIN    | Create a new job         |
-| PUT    | `/api/jobs/{id}`      | ADMIN    | Update a job             |
-| DELETE | `/api/jobs/{id}`      | ADMIN    | Deactivate a job         |
+ Method  |   Endpoint              | Auth     | Description              
+
+ GET    | `/api/jobs/public/all` - None     -> List all active jobs     
+ GET    | `/api/jobs/match/{id}` - JWT      -> Match resume to jobs     
+ POST   | `/api/jobs`            - ADMIN    -> Create a new job         
+ PUT    | `/api/jobs/{id}`       - ADMIN    -> Update a job             
+ DELETE | `/api/jobs/{id}`       - ADMIN    -> Deactivate a job         
 
 ### Dashboard
 | Method | Endpoint         | Description          |
@@ -229,3 +227,14 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'admin@example.com';
 ```
 
 Admin users can create, update, and deactivate jobs via the API.
+---
+
+## Limitations
+
+- **Sample job data:** The 8 jobs shown in Job Matching are dummy data seeded for demonstration. They are not real openings.
+- **No password reset:** Users can register and log in, but there is no "forgot password" flow yet. Planned: an email-based reset link with a time-limited token.
+- **Static fallback suggestions:** Without a Gemini API key, the feedback suggestions are fixed text and do not change with the resume content.
+             (Planned: generate them from the parsed resume text)
+- **Literal keyword matching:** Similar terms such as "RESTful" and "REST API" are counted as different keywords.
+             (Planned: synonym matching.)
+  
