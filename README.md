@@ -1,3 +1,7 @@
+## Why I Built This
+
+Earlier, when I checked my resume on ATS websites, my score was always below 40. I was always curious to know what the problem was and most good websites charged some money for suggestions. My curiosity grew, so I asked ChatGPT how an ATS works in the background. After that, I decided to build my own ATS checker. I took help from another GitHub repository, some AI tools and YouTube to learn and build my skills. Right now this project works only on localhost, with some limitations (mentioned at the end). Soon I will deploy it on a server for free, with better feedback.
+
 #  ResumeAI - Resume Analyzer
 
 An AI-powered resume analysis platform built with **Spring Boot** (backend) and **React** (frontend).
