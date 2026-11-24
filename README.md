@@ -12,7 +12,7 @@ Upload your resume and get:
 
 ## Why I Built This
 
-Earlier, when I checked my resume on ATS websites, my score was always below 40. I was always curious to know what the problem was and most good websites charged some money for suggestions. My curiosity grew, so I asked ChatGPT how an ATS works in the background. After that, I decided to build my own ATS checker. I looked at other open-source projects to understand how ATS checkers work, and used AI tools and YouTube to learn and build my skills. Right now this project works only on localhost(for backend 8080 and for frontend 3000, with some limitations (mentioned at the end). Soon I will deploy it on a server for free, with better feedback.
+Earlier, when I checked my resume on ATS websites, my score was always below 40. I was always curious to know what the problem was and most good websites charged some money for suggestions. My curiosity grew, so I asked ChatGPT how an ATS works in the background. After that, I decided to build my own ATS checker. I looked at other open-source projects to understand how ATS checkers work, and used AI tools and YouTube to learn and build my skills. Right now this project works only on localhost(for backend 8080 and for frontend 3000), with some limitations (mentioned at the end). Soon I will deploy it on a server for free, with better feedback.
 
 ---
 
