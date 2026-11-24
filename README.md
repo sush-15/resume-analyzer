@@ -1,35 +1,39 @@
-## Why I Built This
-
-Earlier, when I checked my resume on ATS websites, my score was always below 40. I was always curious to know what the problem was and most good websites charged some money for suggestions. My curiosity grew, so I asked ChatGPT how an ATS works in the background. After that, I decided to build my own ATS checker. I took help from another GitHub repository, some AI tools and YouTube to learn and build my skills. Right now this project works only on localhost, with some limitations (mentioned at the end). Soon I will deploy it on a server for free, with better feedback.
-
-#  ResumeAI - Resume Analyzer
+# ResumeAI - Resume Analyzer
 
 An AI-powered resume analysis platform built with **Spring Boot** (backend) and **React** (frontend).
 
 Upload your resume and get:
-- **ATS Score** - for keyword match, section completeness, skills, formatting (0–100)
-- **AI Feedback** - for suggestions, missing skills, and improvements via Gemini AI
+- **ATS Score** - keyword match, section completeness, skills, formatting (0–100)
+- **AI Feedback** - suggestions, missing skills, and improvements via Gemini AI
 - **Job Matching** - match your resume against available jobs with skill gap analysis
-- **Dashboard** - track your progress over time to time
+- **Dashboard** - track your progress over time
+
+---
+
+## Why I Built This
+
+Earlier, when I checked my resume on ATS websites, my score was always below 40. I was always curious to know what the problem was and most good websites charged some money for suggestions. My curiosity grew, so I asked ChatGPT how an ATS works in the background. After that, I decided to build my own ATS checker. I took help from another GitHub repository, some AI tools and YouTube to learn and build my skills. Right now this project works only on localhost, with some limitations (mentioned at the end). Soon I will deploy it on a server for free, with better feedback.
 
 ---
 
 ## Tech Stack
 
- Backend  - Java 17, Spring Boot 3.2, Spring Security (JWT) 
- Database - MySQL 8 (prod) / H2 in-memory (dev)             
- AI       - Google Gemini API                               
- Frontend - React 18, Recharts, Axios, React Router v6      
+| Layer    | Technology                                      |
+|----------|-------------------------------------------------|
+| Backend  | Java 17, Spring Boot 3.2, Spring Security (JWT) |
+| Database | MySQL 8 (prod) / H2 in-memory (dev)             |
+| AI       | Google Gemini API                               |
+| Frontend | React 18, Recharts, Axios, React Router v6      |
 
 ---
 
 ## Quick Start
 
 ### Prerequisites
-- Java 17+ (or LTS version)
+- Java 17 or higher
 - Node.js 18+
 - Maven 3.8+
-- MySQL 8 (or use H2 for dev - don't install H2 separately. It runs inside your app as a Java library, just add the dependency to your pom.xml is enough and Maven will managed them)
+- MySQL 8 (or use H2 for dev - no separate install needed)
 
 ---
 
@@ -71,7 +75,7 @@ Data is lost on restart. Good for testing.
 2. Create a free API key
 3. Paste it into `application.properties` as `gemini.api.key`
 
-Without a key, the app falls back to rule based feedback (still works but just less detailed).
+Without a key, the app falls back to rule-based feedback (still works but just less detailed).
 
 ---
 
@@ -111,16 +115,17 @@ Frontend starts at **http://localhost:3000**
 - Drag & drop or click to upload PDF, DOC, DOCX (max 10MB)
 - Instant ATS scoring on upload
 - AI feedback generation (Gemini API with fallback)
-- Automatic job matching
+- Job matching against sample jobs
 
 ### ATS Score Breakdown
 
- **Component**         **Max Points** 
- Keyword Match        ->  40        
- Section Completeness -> 25      
- Technical Skills     -> 20        
- Formatting Quality   -> 15        
- **Total**            -> **100**   
+| Component            | Max Points |
+|----------------------|------------|
+| Keyword Match        | 40         |
+| Section Completeness | 25         |
+| Technical Skills     | 20         |
+| Formatting Quality   | 15         |
+| **Total**            | **100**    |
 
 ### Job Matching
 - Match any resume against all active jobs
@@ -148,24 +153,24 @@ Frontend starts at **http://localhost:3000**
 | POST   | `/api/auth/login`     | Login, get JWT    |
 
 ### Resume
- Method |     Endpoint                    |     Description              
-
- POST   - `/api/resume/upload`            -> Upload & analyze resume  
- GET    - `/api/resume/my-resumes`        -> List user's resumes      
- GET    - `/api/resume/{id}/ats-score`    -> Get ATS score            
- GET    - `/api/resume/{id}/ai-feedback`  -> Get AI feedback          
- GET    - `/api/resume/{id}/job-matches`  -> Get job matches          
- POST   - `/api/resume/{id}/reanalyze`    -> Re-run full analysis     
- DELETE - `/api/resume/{id}`              -> Soft-delete resume       
+| Method | Endpoint                       | Description             |
+|--------|--------------------------------|-------------------------|
+| POST   | `/api/resume/upload`           | Upload & analyze resume |
+| GET    | `/api/resume/my-resumes`       | List user's resumes     |
+| GET    | `/api/resume/{id}/ats-score`   | Get ATS score           |
+| GET    | `/api/resume/{id}/ai-feedback` | Get AI feedback         |
+| GET    | `/api/resume/{id}/job-matches` | Get job matches         |
+| POST   | `/api/resume/{id}/reanalyze`   | Re-run full analysis    |
+| DELETE | `/api/resume/{id}`             | Soft-delete resume      |
 
 ### Jobs
- Method  |   Endpoint              | Auth     | Description              
-
- GET    | `/api/jobs/public/all` - None     -> List all active jobs     
- GET    | `/api/jobs/match/{id}` - JWT      -> Match resume to jobs     
- POST   | `/api/jobs`            - ADMIN    -> Create a new job         
- PUT    | `/api/jobs/{id}`       - ADMIN    -> Update a job             
- DELETE | `/api/jobs/{id}`       - ADMIN    -> Deactivate a job         
+| Method | Endpoint               | Auth  | Description          |
+|--------|------------------------|-------|----------------------|
+| GET    | `/api/jobs/public/all` | None  | List all active jobs |
+| GET    | `/api/jobs/match/{id}` | JWT   | Match resume to jobs |
+| POST   | `/api/jobs`            | ADMIN | Create a new job     |
+| PUT    | `/api/jobs/{id}`       | ADMIN | Update a job         |
+| DELETE | `/api/jobs/{id}`       | ADMIN | Deactivate a job     |
 
 ### Dashboard
 | Method | Endpoint         | Description          |
@@ -231,14 +236,12 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'admin@example.com';
 ```
 
 Admin users can create, update, and deactivate jobs via the API.
+
 ---
 
 ## Limitations
 
 - **Sample job data:** The 8 jobs shown in Job Matching are dummy data seeded for demonstration. They are not real openings.
-- **No password reset:** Users can register and log in, but there is no "forgot password" flow yet. Planned: an email-based reset link with a time-limited token.
-- **Static fallback suggestions:** Without a Gemini API key, the feedback suggestions are fixed text and do not change with the resume content.
-             (Planned: generate them from the parsed resume text)
-- **Literal keyword matching:** Similar terms such as "RESTful" and "REST API" are counted as different keywords.
-             (Planned: synonym matching.)
-  
+- **No password reset:** Users can register and log in, but there is no "forgot password" flow yet. (Planned: an email-based reset link with a time-limited token.)
+- **Static fallback suggestions:** Without a Gemini API key, the feedback suggestions are fixed text and do not change with the resume content. (Planned: generate them from the parsed resume text.)
+- **Literal keyword matching:** Similar terms such as "RESTful" and "REST API" are counted as different keywords. (Planned: synonym matching.)
