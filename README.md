@@ -1,12 +1,12 @@
-# 🎯 ResumeAI — Resume Analyzer
+# 🎯 ResumeAI - Resume Analyzer
 
 An AI-powered resume analysis platform built with **Spring Boot** (backend) and **React** (frontend).
 
 Upload your resume and get:
-- **ATS Score** — keyword match, section completeness, skills, formatting (0–100)
-- **AI Feedback** — suggestions, missing skills, and improvements via Gemini AI
-- **Job Matching** — match your resume against available jobs with skill gap analysis
-- **Dashboard** — track your progress over time
+- **ATS Score** - keyword match, section completeness, skills, formatting (0–100)
+- **AI Feedback** - suggestions, missing skills, and improvements via Gemini AI
+- **Job Matching** - match your resume against available jobs with skill gap analysis
+- **Dashboard** - track your progress over time
 
 ---
 
@@ -37,7 +37,7 @@ Upload your resume and get:
 cd resume-analyzer/backend
 ```
 
-**Option A — MySQL (production)**
+**Option A - MySQL (production)**
 
 Edit `src/main/resources/application.properties`:
 ```properties
@@ -53,7 +53,7 @@ Create the database:
 CREATE DATABASE resume_analyzer_db;
 ```
 
-**Option B — H2 in-memory (dev, no MySQL needed)**
+**Option B - H2 in-memory (dev, no MySQL needed)**
 
 ```bash
 mvn spring-boot:run -Dspring-boot.run.profiles=h2
